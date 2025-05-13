@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Imagens</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+        }
+        #generatedImage {
+            max-width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gerador de Imagens</h1>
+        <textarea id="textInput" placeholder="Digite o texto para gerar a imagem..."></textarea>
+        <button onclick="generateImage()">Gerar Imagem</button>
+        <div id="result">
+            <h2>Imagem Gerada:</h2>
+            <img id="generatedImage" style="display: none;">
+        </div>
+    </div>
+
+    <script>
+        async function generateImage() {
+            const text = document.getElementById('textInput').value;
+            if (!text) {
+                alert('Por favor, digite algum texto!');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/images/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: text })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    const img = document.getElementById('generatedImage');
+                    img.src = `data:image/png;base64,${data.image}`;
+                    img.style.display = 'block';
+                } else {
+                    alert('Erro ao gerar imagem: ' + data.error);
+                }
+            } catch (error) {
+                alert('Erro ao fazer a requisição: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html> 

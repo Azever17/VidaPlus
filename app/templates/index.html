@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VidaPlus - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .card {
+            transition: transform 0.2s;
+            margin-bottom: 20px;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .status-badge {
+            font-size: 0.8em;
+            padding: 5px 10px;
+        }
+        .section-title {
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-hospital"></i> VidaPlus
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Hospitais -->
+        <section class="mb-5">
+            <h2 class="section-title">
+                <i class="fas fa-hospital"></i> Hospitais
+            </h2>
+            <div class="row">
+                {% for hospital in hospitais %}
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ hospital.nome }}</h5>
+                            <p class="card-text">
+                                <i class="fas fa-map-marker-alt"></i> {{ hospital.endereco }}<br>
+                                <i class="fas fa-phone"></i> {{ hospital.telefone }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Médicos -->
+        <section class="mb-5">
+            <h2 class="section-title">
+                <i class="fas fa-user-md"></i> Médicos
+            </h2>
+            <div class="row">
+                {% for medico in medicos %}
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ medico.nome }}</h5>
+                            <p class="card-text">
+                                <i class="fas fa-stethoscope"></i> {{ medico.especialidade }}<br>
+                                <i class="fas fa-id-card"></i> CRM: {{ medico.crm }}<br>
+                                <i class="fas fa-envelope"></i> {{ medico.email }}<br>
+                                <i class="fas fa-phone"></i> {{ medico.telefone }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Pacientes -->
+        <section class="mb-5">
+            <h2 class="section-title">
+                <i class="fas fa-users"></i> Pacientes
+            </h2>
+            <div class="row">
+                {% for paciente in pacientes %}
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ paciente.nome }}</h5>
+                            <p class="card-text">
+                                <i class="fas fa-birthday-cake"></i> {{ paciente.data_nascimento.strftime('%d/%m/%Y') }}<br>
+                                <i class="fas fa-user"></i> {{ paciente.idade }} anos - {{ paciente.sexo }}<br>
+                                <i class="fas fa-map-marker-alt"></i> {{ paciente.endereco }}<br>
+                                <i class="fas fa-envelope"></i> {{ paciente.email }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Leitos -->
+        <section class="mb-5">
+            <h2 class="section-title">
+                <i class="fas fa-procedures"></i> Leitos
+            </h2>
+            <div class="row">
+                {% for leito in leitos %}
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Leito {{ leito.numero }}</h5>
+                            <p class="card-text">
+                                <i class="fas fa-bed"></i> {{ leito.tipo }}<br>
+                                <i class="fas fa-map-marker-alt"></i> {{ leito.localizacao }}<br>
+                                <span class="badge {% if leito.status == 'LIVRE' %}bg-success{% elif leito.status == 'OCUPADO' %}bg-danger{% else %}bg-warning{% endif %} status-badge">
+                                    {{ leito.status }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Consultas -->
+        <section class="mb-5">
+            <h2 class="section-title">
+                <i class="fas fa-calendar-check"></i> Consultas
+            </h2>
+            <div class="row">
+                {% for consulta in consultas %}
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ consulta.tipo }}</h5>
+                            <p class="card-text">
+                                <i class="fas fa-calendar"></i> {{ consulta.data_hora.strftime('%d/%m/%Y %H:%M') }}<br>
+                                <i class="fas fa-user"></i> Paciente ID: {{ consulta.paciente_id }}<br>
+                                <i class="fas fa-user-md"></i> Médico ID: {{ consulta.profissional_id }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Internações -->
+        <section class="mb-5">
+            <h2 class="section-title">
+                <i class="fas fa-hospital-user"></i> Internações
+            </h2>
+            <div class="row">
+                {% for internacao in internacoes %}
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Internação #{{ internacao.id }}</h5>
+                            <p class="card-text">
+                                <i class="fas fa-user"></i> Paciente ID: {{ internacao.paciente_id }}<br>
+                                <i class="fas fa-bed"></i> Leito ID: {{ internacao.leito_id }}<br>
+                                <i class="fas fa-calendar-plus"></i> Entrada: {{ internacao.data_entrada.strftime('%d/%m/%Y') }}<br>
+                                <i class="fas fa-calendar-minus"></i> Alta: {{ internacao.data_alta.strftime('%d/%m/%Y') }}<br>
+                                <i class="fas fa-notes-medical"></i> {{ internacao.motivo }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

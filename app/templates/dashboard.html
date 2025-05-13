@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - VidaPlus</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f4f6fa;
+        }
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+        .sidebar .nav-link {
+            color: rgba(255,255,255,.85);
+            padding: 1rem;
+            margin: 0.2rem 0;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background: rgba(255,255,255,.15);
+            color: #fff;
+        }
+        .main-content {
+            padding: 2rem;
+        }
+        .stat-card {
+            background: #fff;
+            color: #222;
+            border-radius: 1rem;
+            box-shadow: 0 0.5rem 1rem rgba(52,152,219,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            margin-bottom: 1.5rem;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 1rem 2rem rgba(52,152,219,0.12);
+        }
+        .stat-card .icon {
+            font-size: 2.5rem;
+            opacity: 0.8;
+        }
+        .stat-card .number {
+            font-size: 2.2rem;
+            font-weight: bold;
+        }
+        .stat-card .label {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+        .card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 0.5rem 1rem rgba(52,152,219,0.08);
+            margin-bottom: 1.5rem;
+        }
+        .card-header {
+            background: none;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 1.5rem;
+        }
+        .card-body {
+            padding: 1.5rem;
+        }
+        .list-group-item {
+            border: none;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem !important;
+            background: #f8f9fa;
+            transition: all 0.3s;
+        }
+        .list-group-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        .badge-status {
+            font-size: 0.95em;
+            padding: 0.5em 1em;
+            border-radius: 1em;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        .user-info img {
+            margin-left: 0.5rem;
+            border: 2px solid #3498db;
+        }
+        @media (max-width: 991px) {
+            .main-content {
+                padding: 1rem;
+            }
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                min-height: auto;
+                padding-bottom: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar p-3">
+                <h3 class="text-center mb-4 fw-bold">VidaPlus</h3>
+                <nav class="nav flex-column">
+                    <a class="nav-link active" href="/dashboard">
+                        <i class="fas fa-home me-2"></i> Dashboard
+                    </a>
+                    <a class="nav-link" href="/pacientes">
+                        <i class="fas fa-user-injured me-2"></i> Pacientes
+                    </a>
+                    <a class="nav-link" href="/medicos">
+                        <i class="fas fa-user-md me-2"></i> Médicos
+                    </a>
+                    <a class="nav-link" href="/consultas">
+                        <i class="fas fa-calendar-check me-2"></i> Consultas
+                    </a>
+                    <a class="nav-link" href="/agenda">
+                        <i class="fas fa-calendar-alt me-2"></i> Agenda
+                    </a>
+                    <a class="nav-link" href="/relatorios">
+                        <i class="fas fa-chart-bar me-2"></i> Relatórios
+                    </a>
+                    <a class="nav-link" href="/configuracoes">
+                        <i class="fas fa-cog me-2"></i> Configurações
+                    </a>
+                    <a class="nav-link text-danger" href="/logout">
+                        <i class="fas fa-sign-out-alt me-2"></i> Sair
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold">Dashboard</h2>
+                    <div class="user-info">
+                        <span class="me-2">Bem-vindo, <span id="userName">Admin</span></span>
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=3498db&color=fff&rounded=true&size=40" class="rounded-circle" alt="User">
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row mb-4 g-4">
+                    <div class="col-6 col-md-3">
+                        <div class="card stat-card p-3 text-center">
+                            <div class="icon mb-2 text-primary">
+                                <i class="fas fa-user-injured"></i>
+                            </div>
+                            <div class="number" id="totalPacientes">0</div>
+                            <div class="label">Pacientes</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card stat-card p-3 text-center">
+                            <div class="icon mb-2 text-success">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <div class="number" id="totalMedicos">0</div>
+                            <div class="label">Médicos</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card stat-card p-3 text-center">
+                            <div class="icon mb-2 text-warning">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div class="number" id="consultasHoje">0</div>
+                            <div class="label">Consultas Hoje</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card stat-card p-3 text-center">
+                            <div class="icon mb-2 text-info">
+                                <i class="fas fa-calendar-week"></i>
+                            </div>
+                            <div class="number" id="consultasSemana">0</div>
+                            <div class="label">Consultas Semana</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Listas de Pacientes e Médicos -->
+                <div class="row mb-4 g-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-white d-flex align-items-center">
+                                <h5 class="mb-0 fw-bold"><i class="fas fa-user-injured me-2 text-primary"></i>Pacientes Cadastrados</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group" id="pacientesLista">
+                                    <div class="text-center text-muted">Carregando...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-white d-flex align-items-center">
+                                <h5 class="mb-0 fw-bold"><i class="fas fa-user-md me-2 text-success"></i>Médicos Cadastrados</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group" id="medicosLista">
+                                    <div class="text-center text-muted">Carregando...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Próximas Consultas -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-white d-flex align-items-center">
+                                <h5 class="mb-0 fw-bold"><i class="fas fa-calendar-alt me-2 text-primary"></i>Próximas Consultas</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table align-middle mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Data/Hora</th>
+                                                <th>Paciente</th>
+                                                <th>Médico</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="proximasConsultas">
+                                            <tr><td colspan="4" class="text-center text-muted">Carregando...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Função para carregar os dados do dashboard
+        async function loadDashboardData() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = '/login';
+                    return;
+                }
+
+                console.log('Iniciando carregamento dos dados...');
+
+                // Carregar estatísticas
+                console.log('Buscando estatísticas...');
+                const statsResponse = await fetch('/dashboard/stats', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!statsResponse.ok) {
+                    throw new Error(`Erro ao buscar estatísticas: ${statsResponse.status}`);
+                }
+                
+                const stats = await statsResponse.json();
+                console.log('Estatísticas carregadas:', stats);
+                
+                // Atualizar totais
+                document.getElementById('totalPacientes').textContent = stats.total_pacientes;
+                document.getElementById('totalMedicos').textContent = stats.total_medicos;
+                document.getElementById('consultasHoje').textContent = stats.consultas_hoje;
+                document.getElementById('consultasSemana').textContent = stats.consultas_semana;
+
+                // Atualizar lista de pacientes
+                let pacientesHtml = '';
+                if (stats.pacientes_lista.length === 0) {
+                    pacientesHtml = '<div class="text-center text-muted">Nenhum paciente cadastrado</div>';
+                } else {
+                    pacientesHtml = stats.pacientes_lista.map(paciente => `
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <h6 class="mb-1">${paciente.nome}</h6>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+                document.getElementById('pacientesLista').innerHTML = pacientesHtml;
+
+                // Atualizar lista de médicos
+                let medicosHtml = '';
+                if (stats.medicos_lista.length === 0) {
+                    medicosHtml = '<div class="text-center text-muted">Nenhum médico cadastrado</div>';
+                } else {
+                    medicosHtml = stats.medicos_lista.map(medico => `
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <h6 class="mb-1">${medico.nome}</h6>
+                                <span class="badge bg-success">${medico.especialidade}</span>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+                document.getElementById('medicosLista').innerHTML = medicosHtml;
+
+                // Carregar próximas consultas
+                console.log('Buscando próximas consultas...');
+                const consultasResponse = await fetch('/consultas/proximas', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!consultasResponse.ok) {
+                    throw new Error(`Erro ao buscar consultas: ${consultasResponse.status}`);
+                }
+                
+                const consultas = await consultasResponse.json();
+                console.log('Consultas carregadas:', consultas);
+                let consultasHtml = '';
+                if (consultas.length === 0) {
+                    consultasHtml = `<tr><td colspan='4' class='text-center text-muted'>Nenhuma consulta agendada.</td></tr>`;
+                } else {
+                    consultasHtml = consultas.map(consulta => `
+                        <tr>
+                            <td>${new Date(consulta.data_hora).toLocaleString()}</td>
+                            <td>${consulta.paciente.nome}</td>
+                            <td>${consulta.medico.nome}</td>
+                            <td><span class="badge badge-status ${getStatusClass(consulta.status)}">${consulta.status}</span></td>
+                        </tr>
+                    `).join('');
+                }
+                document.getElementById('proximasConsultas').innerHTML = consultasHtml;
+
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+            }
+        }
+
+        function getStatusClass(status) {
+            switch (status) {
+                case 'Agendada': return 'bg-primary text-white';
+                case 'Confirmada': return 'bg-success text-white';
+                case 'Cancelada': return 'bg-danger text-white';
+                case 'Concluída': return 'bg-info text-white';
+                default: return 'bg-secondary text-white';
+            }
+        }
+
+        // Carregar dados ao iniciar
+        loadDashboardData();
+    </script>
+</body>
+</html> 

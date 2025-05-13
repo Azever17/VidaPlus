@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SGHSS</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="login-page">
+    <div class="login-wrapper">
+        <div class="login-container">
+            <div class="login-header">
+                <i class="fas fa-hospital"></i>
+                <h1>SGHSS</h1>
+                <p>Sistema de Gestão Hospitalar</p>
+            </div>
+            <form id="login" class="login-form">
+                <div class="form-group">
+                    <label for="username" class="form-label">
+                        <i class="fas fa-user"></i> Usuário
+                    </label>
+                    <input type="text" id="username" class="form-input" placeholder="Digite seu usuário" required>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock"></i> Senha
+                    </label>
+                    <input type="password" id="password" class="form-input" placeholder="Digite sua senha" required>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Entrar
+                </button>
+            </form>
+            <div id="error-message" class="error-message" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('login').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('error-message');
+            const submitButton = e.target.querySelector('button[type="submit"]');
+
+            try {
+                // Desabilitar o botão durante a requisição
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...';
+
+                console.log('Tentando fazer login...');
+                console.log('Dados enviados:', { username, password });
+                
+                const response = await fetch('/auth/token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                console.log('Resposta recebida:', response.status);
+                const data = await response.json();
+                console.log('Dados recebidos:', data);
+
+                if (response.ok) {
+                    console.log('Login bem-sucedido!');
+                    localStorage.setItem('token', data.access_token);
+                    window.location.href = '/dashboard';
+                } else {
+                    console.error('Erro na resposta:', data);
+                    errorMessage.textContent = data.detail || 'Usuário ou senha incorretos';
+                    errorMessage.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Erro ao fazer login:', error);
+                errorMessage.textContent = 'Erro ao fazer login. Tente novamente.';
+                errorMessage.style.display = 'block';
+            } finally {
+                // Reabilitar o botão
+                submitButton.disabled = false;
+                submitButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar';
+            }
+        });
+    </script>
+</body>
+</html> 
