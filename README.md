@@ -11,7 +11,7 @@ Sistema de Gestão Hospitalar desenvolvido por Marcelo Azevedo (RU: 4312882)
 
 1. Clone o repositório:
 ```bash
-git clone [URL_DO_REPOSITÓRIO]
+git clone [https://github.com/Azever17/VidaPlus.git]
 cd VidaPlus_Marcelo
 ```
 
